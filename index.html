@@ -1,0 +1,821 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>NODR — Own a piece of the internet</title>
+  <meta name="description" content="NODR is a decentralized utility network for the internet. Share storage, bandwidth, compute and power — and get paid for it." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23c6ff3d'/%3E%3Ccircle cx='16' cy='16' r='6' fill='%230a0a0c'/%3E%3C/svg%3E" />
+  <style>
+    :root {
+      --bg: #0a0a0c;
+      --bg-2: #121216;
+      --line: #26262d;
+      --text: #f4f4f0;
+      --muted: #9a9aa3;
+      --lime: #c6ff3d;
+      --violet: #9b7bff;
+      --pink: #ff5fa2;
+      --cyan: #3de0ff;
+      --orange: #ff9a3d;
+      --radius: 22px;
+      --mono: "JetBrains Mono", ui-monospace, monospace;
+      --sans: "Space Grotesk", system-ui, sans-serif;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      line-height: 1.5;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: inherit; text-decoration: none; }
+    img, svg { display: block; }
+    .wrap { width: min(1200px, 100% - 32px); margin-inline: auto; }
+    .mono { font-family: var(--mono); }
+    .eyebrow {
+      font-family: var(--mono); font-size: 12px; letter-spacing: .14em;
+      text-transform: uppercase; color: var(--lime);
+      display: inline-flex; align-items: center; gap: 8px;
+    }
+    .eyebrow::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: currentColor; box-shadow: 0 0 12px currentColor; }
+    h1, h2, h3 { line-height: .95; letter-spacing: -.03em; font-weight: 700; }
+    h2 { font-size: clamp(40px, 6vw, 76px); margin: 14px 0 18px; }
+    .lead { color: var(--muted); font-size: clamp(16px, 1.6vw, 19px); max-width: 620px; }
+    section { padding: clamp(72px, 10vw, 130px) 0; position: relative; }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+      padding: 16px 26px; border-radius: 999px; font-weight: 700; font-size: 16px;
+      border: 2px solid var(--text); cursor: pointer; font-family: var(--sans);
+      transition: transform .15s ease, box-shadow .15s ease, background .15s;
+    }
+    .btn-primary { background: var(--lime); color: #0a0a0c; border-color: var(--lime); box-shadow: 4px 4px 0 var(--text); }
+    .btn-primary:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 var(--text); }
+    .btn-ghost { background: transparent; color: var(--text); }
+    .btn-ghost:hover { background: var(--text); color: var(--bg); }
+
+    /* Nav */
+    .nav {
+      position: sticky; top: 12px; z-index: 50; margin-top: 12px;
+    }
+    .nav-inner {
+      display: flex; align-items: center; justify-content: space-between; gap: 16px;
+      padding: 10px 10px 10px 22px; border-radius: 999px;
+      background: rgba(18, 18, 22, .72); backdrop-filter: blur(14px);
+      border: 1px solid var(--line);
+    }
+    .logo { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 24px; letter-spacing: -.04em; }
+    .logo-mark { width: 30px; height: 30px; border-radius: 9px; background: var(--lime); display: grid; place-items: center; }
+    .logo-mark span { width: 11px; height: 11px; border-radius: 50%; background: var(--bg); animation: pulse 2.4s ease-in-out infinite; }
+    @keyframes pulse { 50% { transform: scale(.6); } }
+    .nav-links { display: flex; gap: 28px; font-size: 15px; color: var(--muted); }
+    .nav-links a:hover { color: var(--text); }
+    .nav .btn { padding: 11px 20px; font-size: 14px; box-shadow: none; }
+    .menu-toggle { display: none; background: none; border: 0; color: var(--text); font-size: 26px; cursor: pointer; padding: 4px 10px; }
+
+    /* Hero */
+    .hero { padding-top: clamp(60px, 9vw, 110px); padding-bottom: 60px; overflow: hidden; }
+    .hero-grid { display: grid; grid-template-columns: 1.1fr 1fr; gap: 40px; align-items: center; }
+    .hero h1 { font-size: clamp(54px, 8.4vw, 120px); margin: 22px 0 24px; }
+    .hero h1 .hl {
+      background: var(--lime); color: var(--bg); padding: 0 .12em; border-radius: .12em;
+      display: inline-block; transform: rotate(-2deg);
+    }
+    .hero .lead { font-size: clamp(17px, 1.8vw, 21px); }
+    .hero .lead strong { color: var(--text); font-weight: 500; }
+    .hero-ctas { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 34px; }
+    .hero-proof { display: flex; gap: 28px; margin-top: 42px; flex-wrap: wrap; }
+    .hero-proof div { font-family: var(--mono); font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: .1em; }
+    .hero-proof b { display: block; font-family: var(--sans); font-size: 30px; color: var(--text); letter-spacing: -.02em; }
+
+    /* Fanned card stack */
+    .stack { position: relative; height: 520px; }
+    .stack .ncard { position: absolute; left: 50%; top: 50%; width: 270px; transition: transform .45s cubic-bezier(.2,.8,.2,1); }
+    .stack .ncard:nth-child(1) { transform: translate(-50%, -50%) translate(-120px, 20px) rotate(-14deg); }
+    .stack .ncard:nth-child(2) { transform: translate(-50%, -50%) translate(0, -16px) rotate(0deg); z-index: 2; }
+    .stack .ncard:nth-child(3) { transform: translate(-50%, -50%) translate(120px, 20px) rotate(14deg); }
+    .stack:hover .ncard:nth-child(1) { transform: translate(-50%, -50%) translate(-170px, 30px) rotate(-20deg); }
+    .stack:hover .ncard:nth-child(3) { transform: translate(-50%, -50%) translate(170px, 30px) rotate(20deg); }
+    .stack:hover .ncard:nth-child(2) { transform: translate(-50%, -50%) translate(0, -30px) rotate(0deg) scale(1.03); }
+
+    /* Node card (the collectible) */
+    .ncard {
+      --c: var(--lime);
+      aspect-ratio: 5 / 7; border-radius: var(--radius); padding: 18px;
+      background: var(--c); color: #0a0a0c;
+      border: 2px solid #0a0a0c; box-shadow: 0 30px 60px -20px rgba(0,0,0,.7);
+      display: flex; flex-direction: column; position: relative; overflow: hidden;
+    }
+    .ncard::after {
+      content: ""; position: absolute; inset: 0; pointer-events: none;
+      background: linear-gradient(115deg, transparent 30%, rgba(255,255,255,.45) 45%, transparent 60%);
+      transform: translateX(-100%); transition: transform .8s ease;
+    }
+    .ncard:hover::after { transform: translateX(100%); }
+    .ncard-top { display: flex; justify-content: space-between; align-items: center; font-family: var(--mono); font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+    .ncard-tier { background: #0a0a0c; color: var(--c); padding: 4px 9px; border-radius: 999px; }
+    .ncard-art {
+      flex: 1; margin: 14px 0; border-radius: 14px; background: #0a0a0c; color: var(--c);
+      display: grid; place-items: center; position: relative; overflow: hidden;
+    }
+    .ncard-art::before {
+      content: ""; position: absolute; inset: 0;
+      background-image: radial-gradient(currentColor 1px, transparent 1px);
+      background-size: 14px 14px; opacity: .18;
+    }
+    .ncard-art svg { width: 58%; height: auto; position: relative; }
+    .ncard h3 { font-size: 30px; letter-spacing: -.03em; }
+    .ncard-sub { font-size: 13px; font-weight: 500; opacity: .75; margin-top: 4px; }
+    .ncard-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 12px; font-family: var(--mono); font-size: 11px; }
+    .ncard-stats div { border: 1.5px solid #0a0a0c; border-radius: 10px; padding: 6px 8px; }
+    .ncard-stats b { display: block; font-size: 14px; }
+
+    /* Marquee */
+    .marquee-wrap { overflow: hidden; padding: 30px 0; }
+    .marquee { border-block: 2px solid var(--text); background: var(--lime); color: var(--bg); overflow: hidden; transform: rotate(-1.5deg); margin: 0 -20px; }
+    .marquee.alt { background: var(--bg); color: var(--text); transform: rotate(1.2deg); margin-top: -12px; }
+    .marquee-track { display: flex; width: max-content; animation: scroll 32s linear infinite; }
+    .marquee.alt .marquee-track { animation-direction: reverse; }
+    .marquee-track span { font-weight: 700; font-size: clamp(22px, 3.2vw, 38px); letter-spacing: -.02em; padding: 14px 0; white-space: nowrap; }
+    .marquee-track span i { font-style: normal; margin: 0 28px; }
+    @keyframes scroll { to { transform: translateX(-50%); } }
+
+    /* Problem */
+    .problem-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 50px; }
+    .stat-card {
+      background: var(--bg-2); border: 1px solid var(--line); border-radius: var(--radius); padding: 30px;
+      transition: transform .25s, border-color .25s;
+    }
+    .stat-card:hover { transform: translateY(-6px); border-color: var(--pink); }
+    .stat-card .big { font-size: clamp(52px, 6vw, 80px); font-weight: 700; letter-spacing: -.05em; line-height: 1; color: var(--pink); }
+    .stat-card p { color: var(--muted); margin-top: 14px; }
+    .stat-card p strong { color: var(--text); font-weight: 500; }
+
+    /* Steps */
+    .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-top: 50px; counter-reset: step; }
+    .step {
+      border: 2px solid var(--text); border-radius: var(--radius); padding: 26px; background: var(--bg);
+      box-shadow: 6px 6px 0 var(--c, var(--lime)); transition: transform .2s, box-shadow .2s;
+      display: flex; flex-direction: column; min-height: 280px;
+    }
+    .step:hover { transform: translate(-3px, -3px); box-shadow: 9px 9px 0 var(--c, var(--lime)); }
+    .step::before {
+      counter-increment: step; content: "0" counter(step);
+      font-family: var(--mono); font-size: 13px; font-weight: 700; color: var(--bg);
+      background: var(--c, var(--lime)); width: fit-content; padding: 4px 10px; border-radius: 999px;
+    }
+    .step h3 { font-size: 28px; margin: auto 0 10px; padding-top: 50px; }
+    .step p { color: var(--muted); font-size: 15px; }
+
+    /* Deck */
+    .deck-head { display: flex; justify-content: space-between; align-items: end; gap: 30px; flex-wrap: wrap; }
+    .deck {
+      display: grid; grid-template-columns: repeat(5, 1fr); gap: 18px; margin-top: 50px;
+    }
+    .deck .ncard { transition: transform .35s cubic-bezier(.2,.8,.2,1); cursor: pointer; }
+    .deck .ncard:nth-child(odd) { transform: rotate(-2deg); }
+    .deck .ncard:nth-child(even) { transform: rotate(2deg) translateY(18px); }
+    .deck .ncard:hover { transform: rotate(0) translateY(-14px) scale(1.04); z-index: 3; }
+    .deck .ncard h3 { font-size: 24px; }
+
+    /* Earn calculator */
+    .earn { background: var(--bg-2); border-block: 1px solid var(--line); }
+    .earn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 50px; align-items: center; }
+    .calc { background: var(--bg); border: 2px solid var(--text); border-radius: var(--radius); padding: 30px; box-shadow: 8px 8px 0 var(--violet); }
+    .field { margin-bottom: 24px; }
+    .field-label { display: flex; justify-content: space-between; font-family: var(--mono); font-size: 13px; color: var(--muted); margin-bottom: 10px; text-transform: uppercase; letter-spacing: .06em; }
+    .field-label output { color: var(--text); font-weight: 700; }
+    input[type=range] { -webkit-appearance: none; appearance: none; width: 100%; height: 8px; border-radius: 99px; background: var(--line); outline: none; }
+    input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 24px; height: 24px; border-radius: 50%; background: var(--lime); border: 3px solid var(--bg); box-shadow: 0 0 0 2px var(--lime); cursor: pointer; }
+    input[type=range]::-moz-range-thumb { width: 20px; height: 20px; border-radius: 50%; background: var(--lime); border: 3px solid var(--bg); cursor: pointer; }
+    .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+    .chip { font-family: var(--mono); font-size: 13px; padding: 8px 14px; border-radius: 999px; border: 1.5px solid var(--line); background: transparent; color: var(--muted); cursor: pointer; transition: .15s; }
+    .chip[aria-pressed="true"] { background: var(--text); color: var(--bg); border-color: var(--text); }
+    .result { margin-top: 30px; padding-top: 24px; border-top: 1px dashed var(--line); display: flex; justify-content: space-between; align-items: end; gap: 20px; flex-wrap: wrap; }
+    .result .label { font-family: var(--mono); font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: .1em; }
+    .result .amount { font-size: clamp(48px, 6vw, 72px); font-weight: 700; letter-spacing: -.05em; line-height: 1; color: var(--lime); }
+    .result .amount small { font-size: 18px; color: var(--muted); letter-spacing: 0; font-weight: 500; }
+    .fine { font-size: 12px; color: var(--muted); margin-top: 14px; }
+
+    /* Network */
+    .net-panel {
+      margin-top: 50px; border-radius: var(--radius); border: 1px solid var(--line); background: var(--bg-2);
+      position: relative; overflow: hidden; padding: 30px;
+    }
+    .net-canvas { width: 100%; height: 360px; display: block; }
+    .net-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--line); border-radius: 16px; overflow: hidden; margin-top: 24px; }
+    .net-stats div { background: var(--bg); padding: 22px; }
+    .net-stats b { display: block; font-size: clamp(28px, 3.4vw, 42px); letter-spacing: -.04em; }
+    .net-stats span { font-family: var(--mono); font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; }
+    .live { position: absolute; top: 24px; right: 24px; font-family: var(--mono); font-size: 12px; color: var(--lime); display: flex; align-items: center; gap: 8px; background: var(--bg); padding: 6px 12px; border-radius: 999px; border: 1px solid var(--line); }
+    .live::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--lime); animation: blink 1.2s infinite; }
+    @keyframes blink { 50% { opacity: .2; } }
+
+    /* Compare */
+    .compare { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 50px; }
+    .compare-col { border-radius: var(--radius); padding: 32px; border: 1px solid var(--line); }
+    .compare-col.old { background: var(--bg-2); }
+    .compare-col.new { background: var(--lime); color: var(--bg); border: 2px solid var(--text); box-shadow: 8px 8px 0 var(--text); }
+    .compare-col h3 { font-size: 34px; margin-bottom: 22px; }
+    .compare-col ul { list-style: none; }
+    .compare-col li { padding: 14px 0; border-top: 1px solid rgba(128,128,128,.25); display: flex; gap: 12px; font-size: 17px; }
+    .compare-col.old li { color: var(--muted); }
+    .compare-col li::before { font-family: var(--mono); font-weight: 700; }
+    .compare-col.old li::before { content: "✕"; color: var(--pink); }
+    .compare-col.new li::before { content: "✓"; }
+
+    /* FAQ */
+    .faq { max-width: 860px; margin: 50px auto 0; }
+    .faq details { border-top: 1px solid var(--line); }
+    .faq details:last-child { border-bottom: 1px solid var(--line); }
+    .faq summary {
+      list-style: none; cursor: pointer; padding: 26px 0; font-size: clamp(19px, 2.2vw, 24px); font-weight: 500;
+      display: flex; justify-content: space-between; align-items: center; gap: 20px;
+    }
+    .faq summary::-webkit-details-marker { display: none; }
+    .faq summary::after {
+      content: "+"; font-family: var(--mono); font-size: 22px; width: 40px; height: 40px; flex: none;
+      border-radius: 50%; border: 1.5px solid var(--line); display: grid; place-items: center; transition: .2s;
+    }
+    .faq details[open] summary::after { content: "–"; background: var(--lime); color: var(--bg); border-color: var(--lime); }
+    .faq details p { color: var(--muted); padding: 0 60px 26px 0; font-size: 17px; }
+
+    /* CTA */
+    .cta-box {
+      background: var(--violet); color: var(--bg); border: 2px solid var(--text); border-radius: 32px;
+      padding: clamp(40px, 7vw, 90px); text-align: center; position: relative; overflow: hidden;
+      box-shadow: 10px 10px 0 var(--lime);
+    }
+    .cta-box h2 { font-size: clamp(48px, 9vw, 130px); margin: 0 0 20px; }
+    .cta-box p { font-size: 19px; max-width: 560px; margin: 0 auto 34px; font-weight: 500; }
+    .waitlist { display: flex; gap: 10px; max-width: 520px; margin: 0 auto; background: var(--bg); padding: 8px; border-radius: 999px; border: 2px solid var(--text); }
+    .waitlist input { flex: 1; min-width: 0; background: transparent; border: 0; outline: none; color: var(--text); font: 500 16px var(--sans); padding: 0 16px; }
+    .waitlist input::placeholder { color: var(--muted); }
+    .waitlist .btn { padding: 13px 22px; box-shadow: none; }
+    .form-msg { margin-top: 16px; font-weight: 700; min-height: 1.5em; }
+    .cta-float { position: absolute; font-size: 60px; opacity: .9; animation: float 6s ease-in-out infinite; }
+    @keyframes float { 50% { transform: translateY(-16px) rotate(8deg); } }
+
+    /* Footer */
+    footer { padding: 70px 0 40px; border-top: 1px solid var(--line); margin-top: 40px; }
+    .foot-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 30px; }
+    .foot-grid h4 { font-family: var(--mono); font-size: 12px; text-transform: uppercase; letter-spacing: .12em; color: var(--muted); margin-bottom: 16px; font-weight: 400; }
+    .foot-grid ul { list-style: none; display: grid; gap: 10px; }
+    .foot-grid li a:hover { color: var(--lime); }
+    .foot-grid p { color: var(--muted); max-width: 320px; margin-top: 14px; }
+    .foot-word { font-size: clamp(90px, 26vw, 360px); font-weight: 700; letter-spacing: -.07em; line-height: .8; margin-top: 60px; color: var(--bg-2); -webkit-text-stroke: 1px var(--line); text-align: center; user-select: none; }
+    .foot-bottom { display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap; color: var(--muted); font-size: 14px; margin-top: 30px; font-family: var(--mono); }
+
+    /* Reveal */
+    .reveal { opacity: 0; transform: translateY(30px); transition: opacity .7s ease, transform .7s ease; }
+    .reveal.in { opacity: 1; transform: none; }
+
+    /* Responsive */
+    @media (max-width: 1020px) {
+      .deck { grid-template-columns: repeat(3, 1fr); }
+      .steps { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 860px) {
+      .nav-links { display: none; }
+      .nav-links.open {
+        display: flex; flex-direction: column; position: absolute; top: calc(100% + 8px); left: 0; right: 0;
+        background: var(--bg-2); border: 1px solid var(--line); border-radius: 24px; padding: 22px; gap: 18px; font-size: 18px;
+      }
+      .menu-toggle { display: block; }
+      .nav .btn { display: none; }
+      .hero-grid, .earn-grid, .compare { grid-template-columns: 1fr; }
+      .stack { height: 440px; }
+      .stack .ncard { width: 220px; }
+      .problem-grid { grid-template-columns: 1fr; }
+      .net-stats { grid-template-columns: repeat(2, 1fr); }
+      .foot-grid { grid-template-columns: 1fr 1fr; }
+      .foot-grid > div:first-child { grid-column: 1 / -1; }
+    }
+    @media (max-width: 560px) {
+      .deck { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+      .deck .ncard h3 { font-size: 19px; }
+      .deck .ncard-stats { display: none; }
+      .steps { grid-template-columns: 1fr; }
+      .step { min-height: 0; }
+      .stack .ncard { width: 190px; }
+      .stack .ncard:nth-child(1) { transform: translate(-50%, -50%) translate(-80px, 20px) rotate(-12deg); }
+      .stack .ncard:nth-child(3) { transform: translate(-50%, -50%) translate(80px, 20px) rotate(12deg); }
+      .stack:hover .ncard:nth-child(1) { transform: translate(-50%, -50%) translate(-95px, 26px) rotate(-16deg); }
+      .stack:hover .ncard:nth-child(3) { transform: translate(-50%, -50%) translate(95px, 26px) rotate(16deg); }
+      .stack { height: 380px; }
+      .waitlist { flex-direction: column; border-radius: 22px; }
+      .waitlist input { padding: 12px 14px; }
+      .faq details p { padding-right: 0; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation: none !important; transition: none !important; }
+      .reveal { opacity: 1; transform: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <header class="wrap nav">
+    <div class="nav-inner" style="position:relative">
+      <a href="#top" class="logo" aria-label="NODR home"><span class="logo-mark"><span></span></span>NODR</a>
+      <nav class="nav-links" id="navLinks">
+        <a href="#problem">Why</a>
+        <a href="#how">How it works</a>
+        <a href="#nodes">Nodes</a>
+        <a href="#earn">Earn</a>
+        <a href="#network">Network</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+      <a href="#join" class="btn btn-primary">Run a node</a>
+      <button class="menu-toggle" id="menuToggle" aria-label="Open menu" aria-expanded="false">☰</button>
+    </div>
+  </header>
+
+  <main id="top">
+    <!-- HERO -->
+    <section class="hero">
+      <div class="wrap hero-grid">
+        <div>
+          <span class="eyebrow">A decentralized utility network for the internet</span>
+          <h1>Own a piece of the <span class="hl">internet.</span></h1>
+          <p class="lead">
+            What if <strong>anyone</strong> could become part of the internet's physical infrastructure —
+            and <strong>get paid</strong> for providing it? Plug in your spare storage, bandwidth, compute
+            and power. NODR turns it into a network.
+          </p>
+          <div class="hero-ctas">
+            <a href="#join" class="btn btn-primary">Start earning →</a>
+            <a href="#how" class="btn btn-ghost">How it works</a>
+          </div>
+          <div class="hero-proof">
+            <div><b data-count="48210">0</b>Nodes online</div>
+            <div><b data-count="132" data-suffix=" PB">0</b>Storage shared</div>
+            <div><b data-count="96">0</b>Countries</div>
+          </div>
+        </div>
+
+        <div class="stack" aria-hidden="true">
+          <div class="ncard" style="--c: var(--violet)">
+            <div class="ncard-top"><span>#002</span><span class="ncard-tier">Rare</span></div>
+            <div class="ncard-art">
+              <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3"><path d="M4 32h14l6-14 8 28 8-20 6 6h14"/></svg>
+            </div>
+            <h3>Bandwidth</h3>
+            <div class="ncard-sub">Route traffic for the edge</div>
+          </div>
+          <div class="ncard" style="--c: var(--lime)">
+            <div class="ncard-top"><span>#001</span><span class="ncard-tier">Genesis</span></div>
+            <div class="ncard-art">
+              <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3"><ellipse cx="32" cy="14" rx="20" ry="7"/><path d="M12 14v36c0 4 9 7 20 7s20-3 20-7V14"/><path d="M12 26c0 4 9 7 20 7s20-3 20-7M12 38c0 4 9 7 20 7s20-3 20-7"/></svg>
+            </div>
+            <h3>Storage</h3>
+            <div class="ncard-sub">Rent out idle terabytes</div>
+            <div class="ncard-stats"><div>Uptime<b>99.4%</b></div><div>Reward<b>1.6×</b></div></div>
+          </div>
+          <div class="ncard" style="--c: var(--pink)">
+            <div class="ncard-top"><span>#003</span><span class="ncard-tier">Epic</span></div>
+            <div class="ncard-art">
+              <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3"><rect x="16" y="16" width="32" height="32" rx="4"/><rect x="25" y="25" width="14" height="14"/><path d="M24 8v8M32 8v8M40 8v8M24 48v8M32 48v8M40 48v8M8 24h8M8 32h8M8 40h8M48 24h8M48 32h8M48 40h8"/></svg>
+            </div>
+            <h3>Compute</h3>
+            <div class="ncard-sub">Lend GPU &amp; CPU cycles</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- MARQUEE -->
+    <div class="marquee-wrap">
+    <div class="marquee" aria-hidden="true">
+      <div class="marquee-track" data-marquee>
+        <span>STORAGE<i>✦</i>BANDWIDTH<i>✦</i>COMPUTE<i>✦</i>EDGE<i>✦</i>POWER<i>✦</i>OWNED BY YOU<i>✦</i></span>
+      </div>
+    </div>
+    <div class="marquee alt" aria-hidden="true">
+      <div class="marquee-track" data-marquee>
+        <span>PLUG IN<i>→</i>SHARE<i>→</i>GET PAID<i>→</i>REPEAT<i>●</i>THE INTERNET IS A UTILITY<i>●</i></span>
+      </div>
+    </div>
+    </div>
+
+    <!-- PROBLEM -->
+    <section id="problem">
+      <div class="wrap">
+        <span class="eyebrow" style="color:var(--pink)">The problem</span>
+        <h2 class="reveal">The cloud is someone else's computer.<br />Usually the same few someones.</h2>
+        <p class="lead reveal">
+          Every app, stream and AI model runs on physical infrastructure — data centers, edge servers,
+          fiber, disks and electricity. That infrastructure is owned by a handful of giants, and so is
+          the value it creates.
+        </p>
+        <div class="problem-grid">
+          <div class="stat-card reveal">
+            <div class="big">~⅔</div>
+            <p>of the global cloud market is controlled by <strong>just three providers</strong>.</p>
+          </div>
+          <div class="stat-card reveal">
+            <div class="big">1 region</div>
+            <p>going down can <strong>take out thousands of services</strong> at once. Centralization is a single point of failure.</p>
+          </div>
+          <div class="stat-card reveal">
+            <div class="big">Billions</div>
+            <p>of devices sit <strong>idle most of the day</strong> — spare disks, unused bandwidth, sleeping GPUs. Wasted capacity.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- HOW IT WORKS -->
+    <section id="how" style="padding-top:0">
+      <div class="wrap">
+        <span class="eyebrow">How it works</span>
+        <h2 class="reveal">Four steps to becoming infrastructure.</h2>
+        <div class="steps">
+          <div class="step reveal" style="--c: var(--lime)">
+            <h3>Plug in</h3>
+            <p>Install the NODR client on a PC, NAS, Raspberry Pi or server — or grab a plug-and-play NODR box.</p>
+          </div>
+          <div class="step reveal" style="--c: var(--violet)">
+            <h3>Share</h3>
+            <p>Choose what to contribute: storage, bandwidth, compute or power. You set the limits, always.</p>
+          </div>
+          <div class="step reveal" style="--c: var(--cyan)">
+            <h3>Prove it</h3>
+            <p>The network verifies your node with cryptographic proofs of storage, uptime and delivery. No trust needed.</p>
+          </div>
+          <div class="step reveal" style="--c: var(--pink)">
+            <h3>Get paid</h3>
+            <p>Earn rewards every epoch for the real work your hardware does. Withdraw anytime.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- NODE DECK -->
+    <section id="nodes" style="padding-top:0">
+      <div class="wrap">
+        <div class="deck-head">
+          <div>
+            <span class="eyebrow" style="color:var(--cyan)">Pick your node</span>
+            <h2 class="reveal">Collect the stack.</h2>
+          </div>
+          <p class="lead reveal" style="max-width:420px">Every resource is a node type. Run one, or stack several on the same machine to multiply your rewards.</p>
+        </div>
+
+        <div class="deck">
+          <div class="ncard reveal" style="--c: var(--lime)">
+            <div class="ncard-top"><span>#001</span><span class="ncard-tier">Common</span></div>
+            <div class="ncard-art"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3"><ellipse cx="32" cy="14" rx="20" ry="7"/><path d="M12 14v36c0 4 9 7 20 7s20-3 20-7V14"/><path d="M12 26c0 4 9 7 20 7s20-3 20-7M12 38c0 4 9 7 20 7s20-3 20-7"/></svg></div>
+            <h3>Storage</h3>
+            <div class="ncard-sub">Store encrypted file shards</div>
+            <div class="ncard-stats"><div>Needs<b>500 GB+</b></div><div>Reward<b>1.0×</b></div></div>
+          </div>
+          <div class="ncard reveal" style="--c: var(--violet)">
+            <div class="ncard-top"><span>#002</span><span class="ncard-tier">Common</span></div>
+            <div class="ncard-art"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3"><path d="M4 32h14l6-14 8 28 8-20 6 6h14"/></svg></div>
+            <h3>Bandwidth</h3>
+            <div class="ncard-sub">Relay &amp; deliver traffic</div>
+            <div class="ncard-stats"><div>Needs<b>50 Mbps</b></div><div>Reward<b>1.2×</b></div></div>
+          </div>
+          <div class="ncard reveal" style="--c: var(--pink)">
+            <div class="ncard-top"><span>#003</span><span class="ncard-tier">Rare</span></div>
+            <div class="ncard-art"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3"><rect x="16" y="16" width="32" height="32" rx="4"/><rect x="25" y="25" width="14" height="14"/><path d="M24 8v8M32 8v8M40 8v8M24 48v8M32 48v8M40 48v8M8 24h8M8 32h8M8 40h8M48 24h8M48 32h8M48 40h8"/></svg></div>
+            <h3>Compute</h3>
+            <div class="ncard-sub">Run jobs &amp; AI inference</div>
+            <div class="ncard-stats"><div>Needs<b>GPU/CPU</b></div><div>Reward<b>2.0×</b></div></div>
+          </div>
+          <div class="ncard reveal" style="--c: var(--cyan)">
+            <div class="ncard-top"><span>#004</span><span class="ncard-tier">Epic</span></div>
+            <div class="ncard-art"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3"><circle cx="32" cy="32" r="6"/><circle cx="32" cy="32" r="16"/><circle cx="32" cy="32" r="26" stroke-dasharray="4 6"/></svg></div>
+            <h3>Edge</h3>
+            <div class="ncard-sub">Cache content near users</div>
+            <div class="ncard-stats"><div>Needs<b>24/7 up</b></div><div>Reward<b>1.8×</b></div></div>
+          </div>
+          <div class="ncard reveal" style="--c: var(--orange)">
+            <div class="ncard-top"><span>#005</span><span class="ncard-tier">Legendary</span></div>
+            <div class="ncard-art"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round"><path d="M36 4 14 36h16l-4 24 24-34H34z"/></svg></div>
+            <h3>Power</h3>
+            <div class="ncard-sub">Feed solar &amp; battery capacity</div>
+            <div class="ncard-stats"><div>Needs<b>Solar/Bat</b></div><div>Reward<b>2.5×</b></div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- EARN -->
+    <section id="earn" class="earn">
+      <div class="wrap earn-grid">
+        <div>
+          <span class="eyebrow" style="color:var(--violet)">Earnings calculator</span>
+          <h2 class="reveal">Your idle hardware has a paycheck.</h2>
+          <p class="lead reveal">Move the sliders to estimate what your setup could earn on NODR. The more you share and the longer you stay online, the more you make.</p>
+        </div>
+
+        <div class="calc reveal" id="calc">
+          <div class="field">
+            <div class="field-label"><span>Resources you'll share</span></div>
+            <div class="chips" id="chips">
+              <button class="chip" type="button" data-k="storage" aria-pressed="true">Storage</button>
+              <button class="chip" type="button" data-k="bandwidth" aria-pressed="true">Bandwidth</button>
+              <button class="chip" type="button" data-k="compute" aria-pressed="false">Compute</button>
+              <button class="chip" type="button" data-k="edge" aria-pressed="false">Edge</button>
+              <button class="chip" type="button" data-k="power" aria-pressed="false">Power</button>
+            </div>
+          </div>
+          <div class="field">
+            <div class="field-label"><label for="tb">Storage</label><output id="tbOut">4 TB</output></div>
+            <input type="range" id="tb" min="0" max="40" value="4" />
+          </div>
+          <div class="field">
+            <div class="field-label"><label for="mbps">Bandwidth</label><output id="mbpsOut">200 Mbps</output></div>
+            <input type="range" id="mbps" min="0" max="1000" step="25" value="200" />
+          </div>
+          <div class="field">
+            <div class="field-label"><label for="uptime">Uptime</label><output id="uptimeOut">90%</output></div>
+            <input type="range" id="uptime" min="10" max="100" value="90" />
+          </div>
+          <div class="result">
+            <div>
+              <div class="label">Est. monthly rewards</div>
+              <div class="amount">$<span id="amount">0</span><small> /mo</small></div>
+            </div>
+            <a href="#join" class="btn btn-primary">Claim my spot</a>
+          </div>
+          <p class="fine">Illustrative estimate only. Actual rewards depend on network demand, location and verified performance.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- NETWORK -->
+    <section id="network">
+      <div class="wrap">
+        <span class="eyebrow">The network</span>
+        <h2 class="reveal">A planet-sized data center,<br />built from living rooms.</h2>
+        <div class="net-panel reveal">
+          <span class="live">LIVE</span>
+          <canvas class="net-canvas" id="net"></canvas>
+          <div class="net-stats">
+            <div><b data-count="48210">0</b><span>Active nodes</span></div>
+            <div><b data-count="132" data-suffix=" PB">0</b><span>Storage</span></div>
+            <div><b data-count="9" data-suffix=".4 Tbps">0</b><span>Bandwidth</span></div>
+            <div><b data-count="99" data-suffix=".97%">0</b><span>Network uptime</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- COMPARE -->
+    <section style="padding-top:0">
+      <div class="wrap">
+        <span class="eyebrow" style="color:var(--orange)">Old internet vs. NODR</span>
+        <h2 class="reveal">A utility, not a landlord.</h2>
+        <div class="compare">
+          <div class="compare-col old reveal">
+            <h3>Centralized cloud</h3>
+            <ul>
+              <li>Owned by a few mega-corporations</li>
+              <li>Profits flow to shareholders</li>
+              <li>Single points of failure</li>
+              <li>Data centers far from users</li>
+              <li>Pricing set behind closed doors</li>
+            </ul>
+          </div>
+          <div class="compare-col new reveal">
+            <h3>NODR network</h3>
+            <ul>
+              <li>Owned by the people who run it</li>
+              <li>Rewards flow to node operators</li>
+              <li>Thousands of redundant nodes</li>
+              <li>Infrastructure next door to users</li>
+              <li>Open, transparent, on-chain pricing</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section id="faq" style="padding-top:0">
+      <div class="wrap">
+        <div style="text-align:center">
+          <span class="eyebrow">FAQ</span>
+          <h2 class="reveal">Questions? Answers.</h2>
+        </div>
+        <div class="faq">
+          <details>
+            <summary>What exactly is NODR?</summary>
+            <p>NODR is a decentralized utility network for the internet. Instead of relying only on giant data centers, NODR pools storage, bandwidth, compute and power from everyday people and businesses — and pays them for it.</p>
+          </details>
+          <details>
+            <summary>What hardware do I need?</summary>
+            <p>Anything from a spare laptop or Raspberry Pi to a home NAS or a rack of servers. Each node type has minimum requirements; the client checks your setup and tells you what you can run.</p>
+          </details>
+          <details>
+            <summary>How do I get paid?</summary>
+            <p>Your node is verified with cryptographic proofs of storage, uptime and delivery. Rewards are calculated every epoch based on the real work you did, and you can withdraw them whenever you like.</p>
+          </details>
+          <details>
+            <summary>Is my data and my network safe?</summary>
+            <p>Everything that touches your node is encrypted and sharded, so you never see anyone's files — and they never see yours. You control exactly how much disk, bandwidth and compute you share.</p>
+          </details>
+          <details>
+            <summary>Who uses the network?</summary>
+            <p>Developers, apps and AI teams who need cheaper, more resilient infrastructure that lives closer to their users. Their payments fund the rewards node operators earn.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section id="join" style="padding-top:0">
+      <div class="wrap">
+        <div class="cta-box reveal">
+          <span class="cta-float" style="top:10%;left:6%">⚡</span>
+          <span class="cta-float" style="bottom:12%;right:7%;animation-delay:-3s">💾</span>
+          <h2>Become the internet.</h2>
+          <p>Join the waitlist to run one of the first NODR nodes and lock in Genesis rewards.</p>
+          <form class="waitlist" id="waitlist">
+            <input type="email" required placeholder="you@email.com" aria-label="Email address" />
+            <button class="btn btn-primary" type="submit">Join waitlist</button>
+          </form>
+          <div class="form-msg" id="formMsg" role="status"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="wrap">
+      <div class="foot-grid">
+        <div>
+          <a href="#top" class="logo"><span class="logo-mark"><span></span></span>NODR</a>
+          <p>The decentralized utility network for the internet. Built by everyone, owned by everyone.</p>
+        </div>
+        <div>
+          <h4>Network</h4>
+          <ul><li><a href="#nodes">Node types</a></li><li><a href="#earn">Earnings</a></li><li><a href="#network">Explorer</a></li></ul>
+        </div>
+        <div>
+          <h4>Learn</h4>
+          <ul><li><a href="#how">How it works</a></li><li><a href="#faq">FAQ</a></li><li><a href="#">Litepaper</a></li></ul>
+        </div>
+        <div>
+          <h4>Community</h4>
+          <ul><li><a href="#">X / Twitter</a></li><li><a href="#">Discord</a></li><li><a href="#">GitHub</a></li></ul>
+        </div>
+      </div>
+      <div class="foot-word" aria-hidden="true">NODR</div>
+      <div class="foot-bottom">
+        <span>© <span id="year">2026</span> NODR</span>
+        <span>Powered by people, not landlords.</span>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Mobile menu
+    const toggle = document.getElementById('menuToggle');
+    const links = document.getElementById('navLinks');
+    toggle.addEventListener('click', () => {
+      const open = links.classList.toggle('open');
+      toggle.setAttribute('aria-expanded', open);
+    });
+    links.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+      links.classList.remove('open');
+      toggle.setAttribute('aria-expanded', 'false');
+    }));
+
+    // Duplicate marquee content for a seamless loop
+    document.querySelectorAll('[data-marquee]').forEach(track => {
+      const span = track.querySelector('span');
+      for (let i = 0; i < 3; i++) track.appendChild(span.cloneNode(true));
+    });
+
+    // Scroll reveal + count-up
+    const countUp = el => {
+      const target = +el.dataset.count, suffix = el.dataset.suffix || '';
+      const start = performance.now(), dur = 1600;
+      const tick = now => {
+        const p = Math.min((now - start) / dur, 1);
+        const v = Math.round(target * (1 - Math.pow(1 - p, 3)));
+        el.textContent = v.toLocaleString() + suffix;
+        if (p < 1) requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    };
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (!e.isIntersecting) return;
+        e.target.classList.add('in');
+        e.target.querySelectorAll('[data-count]').forEach(countUp);
+        if (e.target.dataset.count) countUp(e.target);
+        io.unobserve(e.target);
+      });
+    }, { threshold: 0.15 });
+    document.querySelectorAll('.reveal, .hero-proof [data-count]').forEach(el => io.observe(el));
+
+    // Earnings calculator (illustrative rates)
+    const RATES = { storage: 2.1, bandwidth: 0.045, compute: 38, edge: 14, power: 22 };
+    const tb = document.getElementById('tb'), mbps = document.getElementById('mbps'), uptime = document.getElementById('uptime');
+    const chips = document.querySelectorAll('.chip');
+    const calc = () => {
+      document.getElementById('tbOut').textContent = tb.value + ' TB';
+      document.getElementById('mbpsOut').textContent = mbps.value + ' Mbps';
+      document.getElementById('uptimeOut').textContent = uptime.value + '%';
+      const on = k => document.querySelector(`.chip[data-k="${k}"]`).getAttribute('aria-pressed') === 'true';
+      let total = 0;
+      if (on('storage')) total += tb.value * RATES.storage;
+      if (on('bandwidth')) total += mbps.value * RATES.bandwidth;
+      if (on('compute')) total += RATES.compute;
+      if (on('edge')) total += RATES.edge;
+      if (on('power')) total += RATES.power;
+      const active = [...chips].filter(c => c.getAttribute('aria-pressed') === 'true').length;
+      const stackBonus = 1 + Math.max(0, active - 1) * 0.1;
+      total *= (uptime.value / 100) * stackBonus;
+      document.getElementById('amount').textContent = total.toFixed(0);
+    };
+    chips.forEach(c => c.addEventListener('click', () => {
+      c.setAttribute('aria-pressed', c.getAttribute('aria-pressed') === 'true' ? 'false' : 'true');
+      calc();
+    }));
+    [tb, mbps, uptime].forEach(i => i.addEventListener('input', calc));
+    calc();
+
+    // Card tilt on pointer move
+    document.querySelectorAll('.deck .ncard').forEach(card => {
+      card.addEventListener('pointermove', e => {
+        const r = card.getBoundingClientRect();
+        const x = (e.clientX - r.left) / r.width - .5, y = (e.clientY - r.top) / r.height - .5;
+        card.style.transform = `perspective(700px) rotateY(${x * 16}deg) rotateX(${-y * 16}deg) translateY(-10px) scale(1.04)`;
+      });
+      card.addEventListener('pointerleave', () => { card.style.transform = ''; });
+    });
+
+    // Live network canvas
+    const canvas = document.getElementById('net');
+    const ctx = canvas.getContext('2d');
+    const colors = ['#c6ff3d', '#9b7bff', '#ff5fa2', '#3de0ff', '#ff9a3d'];
+    let nodes = [], W = 0, H = 0;
+    const resize = () => {
+      const dpr = window.devicePixelRatio || 1;
+      W = canvas.clientWidth; H = canvas.clientHeight;
+      canvas.width = W * dpr; canvas.height = H * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      const n = Math.round(W * H / 5200);
+      nodes = Array.from({ length: n }, () => ({
+        x: Math.random() * W, y: Math.random() * H,
+        vx: (Math.random() - .5) * .25, vy: (Math.random() - .5) * .25,
+        c: colors[Math.floor(Math.random() * colors.length)], p: Math.random() * Math.PI * 2
+      }));
+    };
+    const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const draw = () => {
+      ctx.clearRect(0, 0, W, H);
+      for (let i = 0; i < nodes.length; i++) {
+        const a = nodes[i];
+        for (let j = i + 1; j < nodes.length; j++) {
+          const b = nodes[j], d = Math.hypot(a.x - b.x, a.y - b.y);
+          if (d < 90) {
+            ctx.strokeStyle = `rgba(198,255,61,${(1 - d / 90) * .22})`;
+            ctx.lineWidth = 1;
+            ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+          }
+        }
+      }
+      nodes.forEach(n => {
+        if (!reduced) {
+          n.x += n.vx; n.y += n.vy; n.p += .04;
+          if (n.x < 0 || n.x > W) n.vx *= -1;
+          if (n.y < 0 || n.y > H) n.vy *= -1;
+        }
+        const r = 2.2 + Math.sin(n.p) * .8;
+        ctx.fillStyle = n.c; ctx.shadowColor = n.c; ctx.shadowBlur = 10;
+        ctx.beginPath(); ctx.arc(n.x, n.y, r, 0, Math.PI * 2); ctx.fill();
+      });
+      ctx.shadowBlur = 0;
+      if (!reduced) requestAnimationFrame(draw);
+    };
+    resize(); draw();
+    addEventListener('resize', () => { resize(); if (reduced) draw(); });
+
+    // Waitlist (front-end only)
+    document.getElementById('waitlist').addEventListener('submit', e => {
+      e.preventDefault();
+      document.getElementById('formMsg').textContent = "You're on the list. Welcome to the network ⚡";
+      e.target.reset();
+    });
+
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
